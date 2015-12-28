@@ -1,0 +1,55 @@
+# /etc/init/sidekiq.conf - Sidekiq config
+# {{ ansible_managed }}
+# This example config should work with Ubuntu 12.04+.  It
+# allows you to manage multiple Sidekiq instances with
+# Upstart, Ubuntu's native service management tool.
+#
+# See workers.conf for how to manage all Sidekiq instances at once.
+#
+
+description "Sidekiq Background Worker"
+
+# This script is not meant to start on bootup, workers.conf
+# will start all sidekiq instances explicitly when it starts.
+#start on runlevel [2345]
+#stop on runlevel [06]
+limit nofile 756024 756024
+# change to match your deployment user
+setuid {{ ruby_app_user }}
+setgid { ruby_app_user }
+env HOME=/home/{{ ruby_app_user }}
+
+respawn
+respawn limit 3 30
+
+# TERM is sent by sidekiqctl when stopping sidekiq. Without declaring these as
+# normal exit codes, it just respawns.
+normal exit 0 TERM
+
+# Older versions of Upstart might not support the reload command and need
+# this commented out.
+reload signal USR1
+
+instance sidekiq-{{item.queue }}-{{ item.index}}
+
+script
+# this script runs in /bin/sh by default
+# respawn as bash so we can source in rbenv
+exec /bin/bash <<'EOT'
+  # Pick your poison :) Or none if you're using a system wide installed Ruby.
+  # rbenv
+  # source /home/apps/.bash_profile
+  # OR
+   source /home/{{ ruby_app_user }}/.profile
+  # OR system:
+  # source /etc/profile.d/rbenv.sh
+  #
+  # rvm
+  # source /home/apps/.rvm/scripts/rvm
+
+  # Logs out to /var/log/upstart/sidekiq.log by default
+
+  cd /home/{{ ruby_app_user }}/{{ ruby_app_name }}/current
+  exec bundle exec sidekiq -q {{item.queue }} -i {{ item.index}} -e production -P tmp/pids/sidekiq-{{item.queue }}-{{ item.index}}.pid -L log/sidekiq-{{item.queue }}-{{ item.index}}.log
+EOT
+end script

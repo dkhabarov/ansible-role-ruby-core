@@ -1,0 +1,149 @@
+---
+- name: Add project working user
+  user: 
+    name: "{{ruby_app_user}}"
+    home: "/home/{{ruby_app_user}}"
+    shell: "/bin/bash"
+
+- name: Update home permissions
+  file:
+    path: "/home/{{ruby_app_user}}"
+    mode: 0750
+    owner: "{{ruby_app_user}}"
+    group: "{{ruby_app_user}}"
+    state: directory
+
+- name: Create app directories
+  file:
+    path: "/home/{{ ruby_app_user +'/'+ ruby_app_name + '/' +  item }}"
+    mode: 0750
+    owner: "{{ruby_app_user}}"
+    group: "{{ruby_app_user}}"
+    state: directory
+  with_items:
+    - ./
+    - releases
+    - shared
+    - repo
+    - shared/bin
+    - shared/config
+    - shared/config/settings
+    - shared/log
+    - shared/tmp
+    - shared/tmp/pids
+    - shared/tmp/cache
+    - shared/tmp/sockets
+    - shared/vendor
+    - shared/vendor/bundle
+    - shared/public
+    - shared/public/system
+
+- name: Create additional app directories
+  file:
+    path: "/home/{{ ruby_app_user+'/'+ruby_app_name + '/' +  item }}"
+    mode: 0750
+    owner: "{{ruby_app_user}}"
+    group: "{{ruby_app_user}}"
+    state: directory
+  with_items: ruby_app_additional_directories
+  when: ruby_app_additional_directories
+
+- name: Create app configuration files
+  template:
+    src: "database.yml.j2"
+    dest: "{{ app_root }}/shared/config/database.yml"
+    owner: "{{ ruby_app_user }}"
+    group: "{{ ruby_app_user }}"
+  when: ruby_app_config_database is defined
+  notify:
+    - service unicorn upgrade
+
+- name: Create app configuration files
+  template:
+    src: "settings/omniauth.yml.j2"
+    dest: "{{ app_root }}/shared/config/omniauth.yml"
+    owner: "{{ ruby_app_user }}"
+    group: "{{ ruby_app_user }}"
+  when: ruby_app_config_settings_omniauth is defined
+  notify:
+    - service unicorn upgrade
+
+- name: Create app configuration files
+  template:
+    src: "secrets.yml.j2"
+    dest: "{{ app_root }}/shared/config/secrets.yml"
+    owner: "{{ ruby_app_user }}"
+    group: "{{ ruby_app_user }}"
+  when: ruby_app_config_secrets is defined
+  notify:
+    - service unicorn upgrade
+
+- name: Create app configuration files
+  template:
+    src: "sidekiq.yml.j2"
+    dest: "{{ app_root }}/shared/config/sidekiq.yml"
+    owner: "{{ ruby_app_user }}"
+    group: "{{ ruby_app_user }}"
+  when: ruby_app_config_sidekiq is defined
+  notify:
+    - service unicorn upgrade
+
+- name: Create app configuration files
+  template:
+    src: "unicorn.yml.j2"
+    dest: "{{ app_root }}/shared/config/unicorn.yml"
+    owner: "{{ ruby_app_user }}"
+    group: "{{ ruby_app_user }}"
+  when: ruby_app_config_unicorn is defined
+  notify:
+    - service unicorn upgrade
+
+- name: Create app configuration files
+  template:
+    src: "chewy.yml.j2"
+    dest: "{{ app_root }}/shared/config/chewy.yml"
+    owner: "{{ ruby_app_user }}"
+    group: "{{ ruby_app_user }}"
+  when: ruby_app_config_chewy is defined
+  notify:
+    - service unicorn upgrade
+
+- name: install unicorn start script
+  template:
+    src: etc/init.d/unicorn.j2
+    dest: "/etc/init.d/unicorn-{{ruby_app_name}}"
+    owner: root
+    group: root
+    mode: 0755
+  when: ruby_app_config_unicorn is defined
+
+- name: install logrotate.conf
+  template:
+    src: etc/logrotate.d/ruby.conf.j2
+    dest: "/etc/logrotate.d/{{ ruby_app_name }}"
+    owner: root
+    group: root
+    mode: 0644
+  when: ruby_app_config_unicorn is defined
+
+- name: install upstart conf for sidekiq workers
+  template:
+    src: etc/init/sidekiq-workers.conf.j2
+    dest: /etc/init/sidekiq-workers.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: ruby_app_enable_sidekiq is defined
+  tags: install_sidekiq_conf
+
+- name: install worker sidekiq conf
+  template:
+    src: etc/init/sidekiq-worker.conf.j2
+    dest: "/etc/init/sidekiq-{{ item.queue }}-{{ item.index}}.conf"
+    owner: root
+    group: root
+    mode: 0644
+    state: "{{ item.state | default('present') }}"
+  when: ruby_app_enable_sidekiq is defined
+  tags: install_sidekiq_conf
+  with_items: ruby_app_sidekiq_workers

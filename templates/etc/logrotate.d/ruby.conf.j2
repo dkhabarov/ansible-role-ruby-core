@@ -1,0 +1,16 @@
+# {{ ansible_managed }}
+
+/home/{{ ruby_app_user }}/{{ ruby_app_name }}/shared/log/*.log {
+    missingok
+    rotate 15
+    compress
+    notifempty
+    create 0640 {{ ruby_app_user }} {{ ruby_app_user }}
+    size 100M
+    sharedscripts
+    postrotate
+        [ -s /home/{{ ruby_app_user }}/{{ ruby_app_name }}/shared/tmp/pids/unicorn.pid  ] && kill -USR1 `cat /home/{{ ruby_app_user }}/{{ ruby_app_name }}/shared/tmp/pids/unicorn.pid`
+        for f in /home/{{ ruby_app_user }}/{{ ruby_app_name }}/shared/tmp/pids/sidekiq*.pid; do kill -USR2 `cat $f`; done
+        true
+    endscript
+}

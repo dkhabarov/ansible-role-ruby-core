@@ -1,0 +1,8 @@
+---
+- name: ruby core
+  hosts: test
+  become_user: root
+  become: yes
+  become_method: sudo
+  roles:
+    - { role: ansible-role-ruby-core }
