@@ -51,7 +51,7 @@
 - name: Create app configuration files
   template:
     src: "database.yml.j2"
-    dest: "{{ app_root }}/shared/config/database.yml"
+    dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/database.yml"
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_database is defined
@@ -61,7 +61,7 @@
 - name: Create app configuration files
   template:
     src: "settings/omniauth.yml.j2"
-    dest: "{{ app_root }}/shared/config/omniauth.yml"
+    dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/omniauth.yml"
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_settings_omniauth is defined
@@ -71,7 +71,7 @@
 - name: Create app configuration files
   template:
     src: "secrets.yml.j2"
-    dest: "{{ app_root }}/shared/config/secrets.yml"
+    dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/secrets.yml"
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_secrets is defined
@@ -81,7 +81,7 @@
 - name: Create app configuration files
   template:
     src: "sidekiq.yml.j2"
-    dest: "{{ app_root }}/shared/config/sidekiq.yml"
+    dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/sidekiq.yml"
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_sidekiq is defined
@@ -91,7 +91,7 @@
 - name: Create app configuration files
   template:
     src: "unicorn.yml.j2"
-    dest: "{{ app_root }}/shared/config/unicorn.yml"
+    dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/unicorn.yml"
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_unicorn is defined
@@ -101,7 +101,7 @@
 - name: Create app configuration files
   template:
     src: "chewy.yml.j2"
-    dest: "{{ app_root }}/shared/config/chewy.yml"
+    dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/chewy.yml"
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_chewy is defined
