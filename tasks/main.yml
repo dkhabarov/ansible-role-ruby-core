@@ -94,7 +94,7 @@
     dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/unicorn.yml"
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
-  when: ruby_app_config_unicorn is defined
+  when: ruby_app_enable_unicorn is defined
   notify:
     - service unicorn upgrade
 
@@ -115,7 +115,7 @@
     owner: root
     group: root
     mode: 0755
-  when: ruby_app_config_unicorn is defined
+  when: ruby_app_enable_unicorn is defined
 
 - name: install logrotate.conf
   template:
@@ -124,7 +124,7 @@
     owner: root
     group: root
     mode: 0644
-  when: ruby_app_config_unicorn is defined
+  when: ruby_app_enable_unicorn is defined
 
 - name: install upstart conf for sidekiq workers
   template:
