@@ -46,7 +46,7 @@
     group: "{{ruby_app_user}}"
     state: directory
   with_items: ruby_app_additional_directories
-  when: ruby_app_additional_directories
+  when: ruby_app_additional_directories is defined
 
 - name: Create app configuration files
   template:
