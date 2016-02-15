@@ -1,4 +1,18 @@
 ---
+- name: install requirement packages (debian)
+  apt:
+    pkg: "{{ item }}"
+  with_items:
+    - libssl-dev
+    - libreadline-dev
+    - libyaml-dev
+    - libpq-dev
+    - zlib1g-dev
+    - libsqlite3-dev
+    - libmysqlclient-dev
+    - libffi-dev
+  when: ansible_os_family == "Debian"
+
 - name: Add project working user
   user: 
     name: "{{ruby_app_user}}"
