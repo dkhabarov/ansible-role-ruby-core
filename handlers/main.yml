@@ -2,4 +2,4 @@
 - name: service unicorn upgrade
   service:
     name: "unicorn-{{ruby_app_name}}"
-    state: ""
+    state: "reloaded"
