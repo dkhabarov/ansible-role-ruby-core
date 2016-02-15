@@ -158,6 +158,6 @@
     group: root
     mode: 0644
     state: "{{ item.state | default('present') }}"
-  when: ruby_app_enable_sidekiq is defined
+  when: ruby_app_enable_sidekiq is defined and ruby_app_sidekiq_workers is defined
   tags: install_sidekiq_conf
   with_items: ruby_app_sidekiq_workers
