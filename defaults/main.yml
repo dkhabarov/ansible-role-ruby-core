@@ -10,9 +10,9 @@ ruby_app_rails_env: development
 #ruby_app_config_sidekiq:
 #ruby_app_config_unicorn:
 #ruby_app_config_chewy:
-ruby_app_enable_unicorn: no
+ruby_app_enable_unicorn: yes
 ruby_app_enable_sidekiq: no
-ruby_app_sidekiq_workers:
-  - {queue: default, index: 1}
-  - {queue: default, index: 2}
+#ruby_app_sidekiq_workers:
+#  - {queue: default, index: 1}
+#  - {queue: default, index: 2}
 #  - {queue: default, index: 2, absent}
