@@ -11,6 +11,8 @@
     - libsqlite3-dev
     - libmysqlclient-dev
     - libffi-dev
+    - libmagickwand-dev
+    - imagemagick
   when: ansible_os_family == "Debian"
 
 - name: Add project working user
