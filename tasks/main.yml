@@ -64,7 +64,7 @@
   with_items: ruby_app_additional_directories
   when: ruby_app_additional_directories is defined
 
-- name: Create app configuration files
+- name: Create database.yml
   template:
     src: "database.yml.j2"
     dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/database.yml"
@@ -74,7 +74,7 @@
   notify:
     - service unicorn upgrade
 
-- name: Create app configuration files
+- name: Create omniauth.yml
   template:
     src: "settings/omniauth.yml.j2"
     dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/omniauth.yml"
@@ -84,7 +84,7 @@
   notify:
     - service unicorn upgrade
 
-- name: Create app configuration files
+- name: Create secrets.yml
   template:
     src: "secrets.yml.j2"
     dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/secrets.yml"
@@ -94,7 +94,7 @@
   notify:
     - service unicorn upgrade
 
-- name: Create app configuration files
+- name: Create sidekiq.yml
   template:
     src: "sidekiq.yml.j2"
     dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/sidekiq.yml"
@@ -104,7 +104,7 @@
   notify:
     - service unicorn upgrade
 
-- name: Create app configuration files
+- name: Create unicorn.yml.j2
   template:
     src: "unicorn.yml.j2"
     dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/unicorn.yml"
@@ -114,7 +114,7 @@
   notify:
     - service unicorn upgrade
 
-- name: Create app configuration files
+- name: Create chewy.yml
   template:
     src: "chewy.yml.j2"
     dest: "/home/{{ ruby_app_user+'/'+ruby_app_name }}/shared/config/chewy.yml"
