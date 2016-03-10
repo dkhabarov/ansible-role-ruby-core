@@ -16,7 +16,7 @@ description "Sidekiq Background Worker"
 limit nofile 756024 756024
 # change to match your deployment user
 setuid {{ ruby_app_user }}
-setgid { ruby_app_user }
+setgid {{ ruby_app_user }}
 env HOME=/home/{{ ruby_app_user }}
 
 respawn
