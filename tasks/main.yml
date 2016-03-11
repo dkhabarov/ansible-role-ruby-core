@@ -71,6 +71,7 @@
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_database is defined
+  tags: ruby_install_database_yml
   notify:
     - service unicorn upgrade
 
@@ -81,6 +82,7 @@
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_settings_omniauth is defined
+  tags: ruby_install_omniauth_yml
   notify:
     - service unicorn upgrade
 
@@ -91,6 +93,7 @@
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_secrets is defined
+  tags: ruby_install_secrets_yml
   notify:
     - service unicorn upgrade
 
@@ -101,6 +104,7 @@
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_sidekiq is defined
+  tags: ruby_install_sidekiq_yml
   notify:
     - service unicorn upgrade
 
@@ -111,6 +115,7 @@
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_enable_unicorn is defined
+  tags: ruby_install_unicorn_yml
   notify:
     - service unicorn upgrade
 
@@ -121,6 +126,7 @@
     owner: "{{ ruby_app_user }}"
     group: "{{ ruby_app_user }}"
   when: ruby_app_config_chewy is defined
+  tags: ruby_install_chewy_yml
   notify:
     - service unicorn upgrade
 
