@@ -1,18 +1,5 @@
 ---
-- name: install requirement packages (debian)
-  apt:
-    pkg: "{{ item }}"
-  with_items:
-    - libssl-dev
-    - libreadline-dev
-    - libyaml-dev
-    - libpq-dev
-    - zlib1g-dev
-    - libsqlite3-dev
-    - libmysqlclient-dev
-    - libffi-dev
-    - libmagickwand-dev
-    - imagemagick
+- include: Debian.yml
   when: ansible_os_family == "Debian"
 
 - name: Add project working user
@@ -130,15 +117,6 @@
   notify:
     - service unicorn upgrade
 
-- name: install unicorn start script
-  template:
-    src: etc/init.d/unicorn.j2
-    dest: "/etc/init.d/unicorn-{{ruby_app_name}}"
-    owner: root
-    group: root
-    mode: 0755
-  when: ruby_app_enable_unicorn is defined
-
 - name: install logrotate.conf
   template:
     src: etc/logrotate.d/ruby.conf.j2
@@ -147,24 +125,3 @@
     group: root
     mode: 0644
   when: ruby_app_enable_unicorn is defined
-
-- name: install upstart conf for sidekiq workers
-  template:
-    src: etc/init/sidekiq-workers.conf.j2
-    dest: /etc/init/sidekiq-workers.conf
-    owner: root
-    group: root
-    mode: 0644
-  when: ruby_app_enable_sidekiq == True
-  tags: install_sidekiq_conf
-
-- name: install worker sidekiq conf
-  template:
-    src: etc/init/sidekiq-worker.conf.j2
-    dest: "/etc/init/sidekiq-{{ item.queue }}-{{ item.index}}.conf"
-    owner: root
-    group: root
-    mode: 0644
-  when: ruby_app_enable_sidekiq == True
-  tags: install_sidekiq_conf
-  with_items: ruby_app_sidekiq_workers
