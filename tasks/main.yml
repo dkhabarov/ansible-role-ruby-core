@@ -48,7 +48,8 @@
     owner: "{{ruby_app_user}}"
     group: "{{ruby_app_user}}"
     state: directory
-  with_items: ruby_app_additional_directories
+  with_items: 
+    - "{{ ruby_app_additional_directories }}"
   when: ruby_app_additional_directories is defined
 
 - name: Create database.yml
